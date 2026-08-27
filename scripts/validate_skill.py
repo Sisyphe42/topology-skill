@@ -117,6 +117,7 @@ def markdown_targets(text: str) -> list[str]:
 
 
 def validate_links(root: Path, markdown_files: list[Path], errors: list[str]) -> None:
+    lexical_root = Path(os.path.abspath(root))
     for source in markdown_files:
         text = read_text(source, errors)
         for raw_target in markdown_targets(text):
@@ -127,9 +128,12 @@ def validate_links(root: Path, markdown_files: list[Path], errors: list[str]) ->
             relative = unquote(parsed.path).replace("/", os.sep)
             if not relative:
                 continue
-            destination = (source.parent / relative).resolve()
+            # Keep this check lexical. On Windows the Skills CLI can install through
+            # a directory junction, and Path.resolve() would make valid in-skill
+            # links appear to escape into the original source directory.
+            destination = Path(os.path.abspath(source.parent / relative))
             try:
-                destination.relative_to(root)
+                destination.relative_to(lexical_root)
             except ValueError:
                 errors.append(f"relative link escapes skill root: {source.relative_to(root)} -> {target}")
                 continue
@@ -251,9 +255,11 @@ def validate_npx(root: Path) -> list[str]:
     root_arg = str(root)
     try:
         listed = run_command(base + ["add", root_arg, "--list"], root, env)
-        if SKILL_NAME not in listed:
+        plain_listed = re.sub(r"\x1b\[[0-?]*[ -/]*[@-~]", "", listed)
+        if SKILL_NAME not in plain_listed:
             errors.append("Skills CLI discovery did not list topology-skill")
-        if not re.search(r"Found\s+1\s+skill\b", listed):
+        found_count = re.search(r"Found\s+(\d+)\s+skills?\b", plain_listed)
+        if not found_count or found_count.group(1) != "1":
             errors.append("Skills CLI discovery did not report exactly one skill")
 
         prompt = run_command(base + ["use", root_arg, "--skill", SKILL_NAME], root, env)
