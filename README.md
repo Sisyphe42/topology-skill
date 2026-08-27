@@ -1,5 +1,9 @@
 # topology-skill
 
+[![Validate](https://github.com/Sisyphe42/topology-skill/actions/workflows/validate.yml/badge.svg)](https://github.com/Sisyphe42/topology-skill/actions/workflows/validate.yml)
+[![Release](https://img.shields.io/github/v/release/Sisyphe42/topology-skill)](https://github.com/Sisyphe42/topology-skill/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 A portable Agent Skill for inspecting a directory or goal, deciding the right topology, and delivering it inline or as an approved persistent artifact.
 
 The skill assumes a blank environment. Markdown, Mermaid source, text trees, and relationship tables remain valid core outputs without installing a renderer, runtime, package manager, or online service.
@@ -57,9 +61,32 @@ references/decision-standard.md  Decision and complexity rules
 references/format-routing.md     Format and delivery routing
 references/artifact-contract.md  Persistent and inline output contract
 references/rendering.md          Blank-environment rendering fallback
+scripts/validate_skill.py        Dependency-free repository validator
+tests/behavior-cases.md           Prompt-level forward-evaluation cases
+.github/workflows/validate.yml   Windows and Ubuntu compatibility checks
+LICENSE                          MIT license
 ```
+
+## Development validation
+
+The validator uses only the Python standard library. Run the structural and release checks with Python 3.12 or another current Python 3 version:
+
+```sh
+python scripts/validate_skill.py . --repository
+```
+
+Add the pinned Skills CLI discovery, prompt-generation, and isolated copy-install checks when Node.js is available:
+
+```sh
+python scripts/validate_skill.py . --repository --npx-smoke
+```
+
+The CLI smoke test sets `DISABLE_TELEMETRY=1` and `DO_NOT_TRACK=1`. The six [forward behavior cases](tests/behavior-cases.md) document agent-level invariants separately; the validator confirms their presence without pretending to execute an LLM.
 
 ## Telemetry
 
 The skill itself does not collect telemetry. The external Skills CLI may collect anonymous usage data according to its own documentation. Set `DISABLE_TELEMETRY=1` when invoking the CLI if you prefer to disable it.
 
+## License
+
+Released under the [MIT License](LICENSE). Copyright (c) 2026 Sisyphe42.
