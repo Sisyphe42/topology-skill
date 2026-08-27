@@ -1,0 +1,7 @@
+interface:
+  display_name: "Topology Architecture"
+  short_description: "Build decision-gated topology artifacts"
+  default_prompt: "Use $topology-skill to inspect this directory or goal, choose the appropriate topology, and deliver it in the right format."
+policy:
+  allow_implicit_invocation: true
+
