@@ -1,6 +1,8 @@
 ---
 name: topology
 description: Analyze a directory or goal, decide an appropriate topology, and deliver it inline or as an approved persistent artifact. Use for structural, dependency, flow, deployment, process, or entity-relationship topology work; not for merely restyling an already-defined diagram.
+license: MIT
+compatibility: No runtime, renderer, or network required. Markdown, Mermaid source, text trees, and tables are the baseline; rendering and external tools such as Figma are optional enhancements.
 ---
 
 # Topology Architecture

@@ -35,4 +35,4 @@ jobs:
           node-version: "22"
 
       - name: Validate repository and Skills CLI compatibility
-        run: python scripts/validate_skill.py . --repository --npx-smoke
+        run: python scripts/validate_skill.py --repository --npx-smoke
